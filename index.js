@@ -64,6 +64,5 @@ conn
   .then(() => {
     app.listen(port);
   })
-  .catch((err) => {
-    console.log(err);
-  });
+  .catch((err) =>
+    console.log(err));
