@@ -8,3 +8,62 @@ const app = express();
 const port = 3333;
 
 const conn = require("./db/conn");
+
+//import models
+
+//import rotas
+
+// import controller
+
+//configurar engine
+app.engine("handlebars", exphbs.engine());
+app.set("view engine", "handlebars");
+
+//configurar json
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+//middleware para as sessões
+app.use(
+  session({
+    name: "session",
+    secret: "nosso_secrect", //quanto maior a crypto melhor
+    resave: false,
+    saveUninitialized: false,
+    store: new FileStore({
+      logFn: function () {},
+      path: require("path").join(require("os").tmpdir(), "sessions"),
+    }),
+    cookie: {
+      secure: false,
+      maxAge: 360000,
+      expires: new Date(Date.now() + 360000),
+      httpOnly: true,
+    },
+  })
+);
+//importar as flashs
+app.use(flash());
+
+// importar arquivos estáticos
+app.use(express.static("public"));
+
+//armazenar as sessões nas rotas
+app.use((request, response, next) => {
+  if (request.session.userId) {
+    response.locals.session = request.session;
+  }
+  next();
+});
+
+//rotas
+
+//Conexão e criação das tabelas do banco
+conn
+  .sync()
+  .then(() => {
+    app.listen(port);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
