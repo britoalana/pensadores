@@ -10,6 +10,8 @@ const port = 3333;
 const conn = require("./db/conn");
 
 //import models
+const user = require('./models/user')
+const tought = require('./models/tought')
 
 //import rotas
 
