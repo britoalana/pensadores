@@ -10,14 +10,14 @@ const port = 3333;
 const conn = require("./db/conn");
 
 //import models
-const user = require('./models/user')
-const tought = require('./models/tought')
+const user = require("./models/user");
+const tought = require("./models/tought");
 
 //import rotas
-
+const toughtRoutes = require("./routes/toughtsRoutes");
 
 // import controller
-
+const ToughtController = require('./controllers/ToughtController')
 
 //configurar engine
 app.engine("handlebars", exphbs.engine());
@@ -61,6 +61,8 @@ app.use((request, response, next) => {
 });
 
 //rotas
+app.use('/toughts', toughtRoutes)
+app.get('/', ToughtController.showToughts) //home
 
 //Conexão e criação das tabelas do banco
 conn
@@ -68,5 +70,4 @@ conn
   .then(() => {
     app.listen(port);
   })
-  .catch((err) =>
-    console.log(err));
+  .catch((err) => console.log(err));
