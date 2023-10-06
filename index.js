@@ -15,9 +15,10 @@ const tought = require("./models/tought");
 
 //import rotas
 const toughtRoutes = require("./routes/toughtsRoutes");
+const authRouters = require("./routes/authRouters");
 
 // import controller
-const ToughtController = require('./controllers/ToughtController')
+const ToughtController = require("./controllers/ToughtController");
 
 //configurar engine
 app.engine("handlebars", exphbs.engine());
@@ -61,11 +62,15 @@ app.use((request, response, next) => {
 });
 
 //rotas
-app.use('/toughts', toughtRoutes)
-app.get('/', ToughtController.showToughts) //home
+app.use("/toughts", toughtRoutes);
+app.use('/', authRouters)
+
+app.get("/", ToughtController.showToughts); //home
 
 //Conexão e criação das tabelas do banco
 conn
+  // .sync({force:true})
+
   .sync()
   .then(() => {
     app.listen(port);
