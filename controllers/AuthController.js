@@ -13,17 +13,52 @@ module.exports = class AuthController {
   static async registerPost(request, response) {
     const { name, email, password, confirmpassword } = request.body;
 
+    // if(name === '' || !name || name.lenght < 3){
+
+    // }
+
     if (password != confirmpassword) {
       request.flash("message", "As senhas não conferem, tente novamente");
       return response.render("auth/register");
     }
 
     //validação de email cadastrado - verificar se email já está cadastrado
+    const checkIfUserExist = await User.findOne({ where: { email: email } });
+    if (checkIfUserExist) {
+      request.flash("message", "O e-mail já está em uso");
+      response.render("auth/register");
+      return;
+    }
 
     //criptografar a senha do usuário
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
     //cirar objeto usuário para cadastro no banco
+    const user = {
+      name,
+      email,
+      password: hashedPassword,
+    };
 
     //try - inserir usuário no banco e trabalhar com sessão
+    try {
+      const createdUser = await User.create(user);
+
+      request.session.userId = createdUser.id;
+
+      request.flash("message", "Cadastro realizado com sucesso!");
+
+      request.session.save(() => {
+        response.redirect("/");
+      });
+    } catch (error) {
+      console.logo(error);
+    }
+  }
+
+  static async logout(request, response) {
+    request.session.destroy();
+    response.redirect("/login");
   }
 };
