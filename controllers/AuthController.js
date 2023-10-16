@@ -23,7 +23,7 @@ module.exports = class AuthController {
     const passwordMatch = bcrypt.compareSync(password, user.password);
     if (!passwordMatch) {
       request.flash("message", "Senha incorreta");
-      response.redirect("/login");
+      response.render("auth/login");
       return
     }
 
